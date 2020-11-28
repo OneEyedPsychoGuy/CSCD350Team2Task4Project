@@ -168,6 +168,8 @@ public class CommandParser {
 			//return new CommandBehavioralSetSpeed(id, number);
 		}// end of rule 15
 		
+		return null; //if nothing else, return null for now
+		
     }//end method: parse_DO
     
     private A_Command parse_CREATE() {return null;}

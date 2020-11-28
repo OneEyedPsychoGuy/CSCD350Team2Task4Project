@@ -87,14 +87,89 @@ public class CommandParser {
 		// rule 66
 		else if(this.commandTextArray.get(0).equalsIgnoreCase("USE"))
 			command = null;
-			// unknown command call here
+			// unknown command call here. See MyParserHelper
     	
 		//schedule command into the parserHelper
     	this.parserHelper.getActionProcessor().schedule(command);
     	
     }//end method: parse
 
-    private A_Command parse_DO() {return null;}
+    private A_Command parse_DO() 
+    {
+    	
+    	// rule 2
+		if(this.commandTextArray.get(1).equalsIgnoreCase("BRAKE"))
+		{
+			return null;
+			//return new CommandBehavioralBrake(id);
+		}//end of rule 2
+		
+		// rule 6
+		else if(
+			this.commandTextArray.get(1).equalsIgnoreCase("SELECT") && 
+			this.commandTextArray.get(2).equalsIgnoreCase("DRAWBRIDGE") &&
+			this.commandTextArray.get(4).equalsIgnoreCase("POSITION")
+		)
+		{
+			return null;
+			//return new CommandBehavioralSelectBridge(id, UPorDOWN);
+		}//end of rule 6
+		
+		// rule 7
+		else if(
+			this.commandTextArray.get(1).equalsIgnoreCase("SELECT") &&
+			this.commandTextArray.get(2).equalsIgnoreCase("ROUNDHOUSE") &&
+			this.commandTextArray.get(4).equalsIgnoreCase("POSITION")
+		)
+		{
+			return null;
+			//return new CommandBehavioralSelectRoundhouse(id, angle, clockWise);
+		}//end of rule 7
+		
+		// rule 8
+		else if(
+			this.commandTextArray.get(1).equalsIgnoreCase("SELECT") &&
+			this.commandTextArray.get(2).equalsIgnoreCase("SWITCH") &&
+			this.commandTextArray.get(4).equalsIgnoreCase("PATH")
+		) 
+		{
+			return null;
+			//return new CommandBehavioralSelectSwitch(id, primaryorSecondary);
+		}//end of rule 8
+		
+		// rule 11
+		else if(
+			this.commandTextArray.get(1).equalsIgnoreCase("SET") &&
+			this.commandTextArray.get(3).equalsIgnoreCase("DIRECTION")
+		) 
+		{
+			return null;
+			//return new CommandBehavioralSetDirection(id, forwardOrBackwards);
+		}//end of rule 11
+		
+		// rule 12
+		else if(
+			this.commandTextArray.get(1).equalsIgnoreCase("SET") &&
+			this.commandTextArray.get(2).equalsIgnoreCase("REFERENCE") &&
+			this.commandTextArray.get(3).equalsIgnoreCase("ENGINE")
+		)
+		{
+			return null;
+			//return new CommandBehavioralSetReference(id);
+		}//end of rule 12
+		
+		// rule 15
+		else if(
+			this.commandTextArray.get(1).equalsIgnoreCase("SET") &&
+			this.commandTextArray.get(3).equalsIgnoreCase("SPEED") 
+		) 
+		{
+			return null;
+			//return new CommandBehavioralSetSpeed(id, number);
+		}// end of rule 15
+		
+    }//end method: parse_DO
+    
     private A_Command parse_CREATE() {return null;}
     
 }//end class: CommandParser

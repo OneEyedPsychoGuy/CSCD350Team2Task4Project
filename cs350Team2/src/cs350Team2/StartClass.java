@@ -24,5 +24,6 @@ public class StartClass {
 		*/
 		
 
-	}
-}
+	}//end main
+	
+}//end class: startClass

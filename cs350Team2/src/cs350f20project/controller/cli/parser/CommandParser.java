@@ -1,22 +1,26 @@
 package cs350f20project.controller.cli.parser;
 
-import cs350f20project.controller.cli.parser.MyParserHelper;
-import cs350f20project.controller.command.A_Command;
-import cs350f20project.controller.command.meta.CommandMetaDoExit;
-import cs350f20project.datatype.Angle;
+import java.util.Arrays;
+import java.util.ArrayList;
 
 public class CommandParser {
 
 	// FIELDS
+	
 	private MyParserHelper parserHelper;
 	private String commandText;
+	private ArrayList<String> commandTextArray;
 
 	// CONSTRUCTORS
+	
     public CommandParser(MyParserHelper parserHelper, String commandText){
         this.parserHelper = parserHelper;
         this.commandText = commandText;
+        this.commandTextArray = new ArrayList<String>(Arrays.asList(this.commandText.split(" ")));
+        
+        System.out.println(commandTextArray); //this makes sure that the command entered got converted to an arrayList
 
-        System.out.println("HI USING OUR PARSER");
+        System.out.println("TEAM 2 PARSER"); //this makes sure that we are referencing our CommandParser class
     }//end constructor
     
     // PARSE DATATYPE
@@ -30,12 +34,14 @@ public class CommandParser {
     
     // PARSE METHODS
     public void parse(){
-
+    	
+    	/*
         if (this.commandText.equalsIgnoreCase("@exit"))
         {
         	A_Command command = new CommandMetaDoExit();
         	this.parserHelper.getActionProcessor().schedule(command);
         }
+        */
 
     }//end method: parse
 

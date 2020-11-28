@@ -51,41 +51,90 @@ public class CommandParser {
     	
 		// rule 52
 		else if(this.commandTextArray.get(0).equalsIgnoreCase("@RUN"))
+		{
 			command = null;
 			//command = new CommandMetaDoMetaRun();
+		}//end of rule 52
 		
 		// rule 55
-		else if(this.commandTextArray.get(0).equalsIgnoreCase("CLOSE"))
+		else if
+		(
+			this.commandTextArray.get(0).equalsIgnoreCase("CLOSE") &&
+			this.commandTextArray.get(1).equalsIgnoreCase("VIEW")
+		)
+		{
 			command = null;
 			//command = new CommandMetaViewDestroy();
+		}//end of rule 55
 		
 		// rule 56
-		else if(this.commandTextArray.get(0).equalsIgnoreCase("OPEN"))
+		else if
+		(
+			this.commandTextArray.get(0).equalsIgnoreCase("OPEN") &&
+			this.commandTextArray.get(1).equalsIgnoreCase("VIEW") &&
+			this.commandTextArray.get(3).equalsIgnoreCase("ORIGIN") &&
+			this.commandTextArray.get(5).equalsIgnoreCase("WORLD") &&
+			this.commandTextArray.get(6).equalsIgnoreCase("WIDTH") &&
+			this.commandTextArray.get(8).equalsIgnoreCase("SCREEN") &&
+			this.commandTextArray.get(9).equalsIgnoreCase("WIDTH") &&
+			this.commandTextArray.get(11).equalsIgnoreCase("HEIGHT")
+		)
+		{
 			command = null;
 			//command = new CommandMetaViewGenerate();
+		}//end of rule 56
 		
 		// rule 60
 		else if(this.commandTextArray.get(0).equalsIgnoreCase("COMMIT"))
+		{
 			command = null;
 			//command = new CommandStructuralCommit();
+		}//end of rule 60
 		
 		// rule 61
-		else if(this.commandTextArray.get(0).equalsIgnoreCase("COUPLE"))
+		else if
+		(
+			this.commandTextArray.get(0).equalsIgnoreCase("COUPLE") &&
+			this.commandTextArray.get(1).equalsIgnoreCase("STOCK") &&
+			this.commandTextArray.get(3).equalsIgnoreCase("AND")
+		)
+		{
 			command = null;
 			//command = new CommandStructuralCouple();
+		}//end of rule 61
 		
 		// rule 62
-		else if(this.commandTextArray.get(0).equalsIgnoreCase("LOCATE"))
+		else if
+		(
+			this.commandTextArray.get(0).equalsIgnoreCase("LOCATE") &&
+			this.commandTextArray.get(1).equalsIgnoreCase("STOCK") &&
+			this.commandTextArray.get(3).equalsIgnoreCase("ON") &&
+			this.commandTextArray.get(4).equalsIgnoreCase("TRACK") &&
+			this.commandTextArray.get(6).equalsIgnoreCase("DISTANCE") &&
+			this.commandTextArray.get(8).equalsIgnoreCase("FROM")
+		)
+		{
 			command = null;
 			//command = new CommandStructuralLocate();
+		}//end of rule 62
 		
 		// rule 65
-		else if(this.commandTextArray.get(0).equalsIgnoreCase("UNCOUPLE"))
+		else if
+		(
+			this.commandTextArray.get(0).equalsIgnoreCase("UNCOUPLE") &&
+			this.commandTextArray.get(1).equalsIgnoreCase("STOCK") &&
+			this.commandTextArray.get(3).equalsIgnoreCase("AND")
+		)
 			command = null;
 			//command = new CommandStructuralUncouple();
 		
 		// rule 66
-		else if(this.commandTextArray.get(0).equalsIgnoreCase("USE"))
+		else if
+		(
+			this.commandTextArray.get(0).equalsIgnoreCase("USE") &&
+			this.commandTextArray.get(2).equalsIgnoreCase("AS") &&
+			this.commandTextArray.get(3).equalsIgnoreCase("REFERENCE")
+		)
 			command = null;
 			// unknown command call here. See MyParserHelper
     	

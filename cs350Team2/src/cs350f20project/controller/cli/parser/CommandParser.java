@@ -105,7 +105,8 @@ public class CommandParser {
 		}//end of rule 2
 		
 		// rule 6
-		else if(
+		else if
+		(
 			this.commandTextArray.get(1).equalsIgnoreCase("SELECT") && 
 			this.commandTextArray.get(2).equalsIgnoreCase("DRAWBRIDGE") &&
 			this.commandTextArray.get(4).equalsIgnoreCase("POSITION")
@@ -116,7 +117,8 @@ public class CommandParser {
 		}//end of rule 6
 		
 		// rule 7
-		else if(
+		else if
+		(
 			this.commandTextArray.get(1).equalsIgnoreCase("SELECT") &&
 			this.commandTextArray.get(2).equalsIgnoreCase("ROUNDHOUSE") &&
 			this.commandTextArray.get(4).equalsIgnoreCase("POSITION")
@@ -127,7 +129,8 @@ public class CommandParser {
 		}//end of rule 7
 		
 		// rule 8
-		else if(
+		else if
+		(
 			this.commandTextArray.get(1).equalsIgnoreCase("SELECT") &&
 			this.commandTextArray.get(2).equalsIgnoreCase("SWITCH") &&
 			this.commandTextArray.get(4).equalsIgnoreCase("PATH")
@@ -138,7 +141,8 @@ public class CommandParser {
 		}//end of rule 8
 		
 		// rule 11
-		else if(
+		else if
+		(
 			this.commandTextArray.get(1).equalsIgnoreCase("SET") &&
 			this.commandTextArray.get(3).equalsIgnoreCase("DIRECTION")
 		) 
@@ -148,7 +152,8 @@ public class CommandParser {
 		}//end of rule 11
 		
 		// rule 12
-		else if(
+		else if
+		(
 			this.commandTextArray.get(1).equalsIgnoreCase("SET") &&
 			this.commandTextArray.get(2).equalsIgnoreCase("REFERENCE") &&
 			this.commandTextArray.get(3).equalsIgnoreCase("ENGINE")
@@ -159,7 +164,8 @@ public class CommandParser {
 		}//end of rule 12
 		
 		// rule 15
-		else if(
+		else if
+		(
 			this.commandTextArray.get(1).equalsIgnoreCase("SET") &&
 			this.commandTextArray.get(3).equalsIgnoreCase("SPEED") 
 		) 
@@ -172,6 +178,164 @@ public class CommandParser {
 		
     }//end method: parse_DO
     
-    private A_Command parse_CREATE() {return null;}
+    private A_Command parse_CREATE() 
+    {
+    	
+    	// rule 22
+		if
+		(
+			this.commandTextArray.get(1).equalsIgnoreCase("POWER") &&
+			this.commandTextArray.get(2).equalsIgnoreCase("CATENARY") &&
+			this.commandTextArray.get(4).equalsIgnoreCase("WITH") &&
+			this.commandTextArray.get(5).equalsIgnoreCase("POLES")
+		) 
+		{
+			return null;
+			//return new CommandCreatePowerCatenary(idl, id_POLES);
+		}//end of rule 22
+		
+		// rule 23
+		else if
+		(
+			this.commandTextArray.get(1).equalsIgnoreCase("POWER") && 
+			this.commandTextArray.get(2).equalsIgnoreCase("POLE") &&
+			this.commandTextArray.get(4).equalsIgnoreCase("ON") &&
+			this.commandTextArray.get(5).equalsIgnoreCase("TRACK") &&
+			this.commandTextArray.get(7).equalsIgnoreCase("DISTANCE") &&
+			this.commandTextArray.get(9).equalsIgnoreCase("FROM")
+		) 
+		{
+			return null;
+			//return new CommandCreatePowerPole(pole_ID, track_locator);
+		}//end of rule 23
+		
+		// rule 24
+		else if
+		(
+			this.commandTextArray.get(1).equalsIgnoreCase("POWER") &&
+			this.commandTextArray.get(2).equalsIgnoreCase("STATION") &&
+			this.commandTextArray.get(4).equalsIgnoreCase("REFERENCE") &&
+			this.commandTextArray.get(6).equalsIgnoreCase("DELTA") &&
+			this.commandTextArray.get(8).equalsIgnoreCase("WITH")
+		)
+		{
+			return null;
+			//return new CommandCreatePowerStation();
+		}//end of rule 24
+    	
+		// rule 25
+		else if
+		(
+			this.commandTextArray.get(1).equalsIgnoreCase("POWER") &&
+			this.commandTextArray.get(2).equalsIgnoreCase("SUBSTATION") &&
+			this.commandTextArray.get(4).equalsIgnoreCase("REFERENCE") &&
+			this.commandTextArray.get(6).equalsIgnoreCase("DELTA") &&
+			this.commandTextArray.get(8).equalsIgnoreCase("WITH") &&
+			this.commandTextArray.get(9).equalsIgnoreCase("CATENARIES")
+		)
+		{
+			return null;
+			//return new CommandCreatePowerSubstation();
+		}// end of rule 25
+		
+		// rule 28
+		else if
+		(
+			this.commandTextArray.get(1).equalsIgnoreCase("STOCK") &&
+			this.commandTextArray.get(2).equalsIgnoreCase("CAR") &&
+			this.commandTextArray.get(4).equalsIgnoreCase("AS") &&
+			this.commandTextArray.get(5).equalsIgnoreCase("BOX")
+		) 
+		{
+			return null;
+			//return new CommandCreateStockCarBox(id);
+		}//end of rule 28
+		
+		// rule 29
+		else if
+		(
+			this.commandTextArray.get(1).equalsIgnoreCase("STOCK") &&
+			this.commandTextArray.get(2).equalsIgnoreCase("CAR") &&
+			this.commandTextArray.get(4).equalsIgnoreCase("AS") &&
+			this.commandTextArray.get(5).equalsIgnoreCase("CABOOSE")
+		) 
+		{
+			return null;
+			//return new CommandCreateStockCarCaboose(id);
+		}//end of rule 29
+		
+		// rule 30
+		else if
+		(
+			this.commandTextArray.get(1).equalsIgnoreCase("STOCK") &&
+			this.commandTextArray.get(2).equalsIgnoreCase("CAR") &&
+			this.commandTextArray.get(4).equalsIgnoreCase("AS") &&
+			this.commandTextArray.get(5).equalsIgnoreCase("FLATBED")
+		) 
+		{
+			return null;
+			//return new CommandCreateStockCarFlatbed(id);
+		}//end of rule 30
+		
+		// rule 31
+		else if
+		(
+			this.commandTextArray.get(1).equalsIgnoreCase("STOCK") &&
+			this.commandTextArray.get(2).equalsIgnoreCase("CAR") &&
+			this.commandTextArray.get(4).equalsIgnoreCase("AS") &&
+			this.commandTextArray.get(5).equalsIgnoreCase("PASSENGER")
+		) 
+		{
+			return null;
+			//return new CommandCreateStockCarPassenger(id);
+		}//end of rule 31
+		
+		// rule 32
+		else if
+		(
+			this.commandTextArray.get(1).equalsIgnoreCase("STOCK") &&
+			this.commandTextArray.get(2).equalsIgnoreCase("CAR") &&
+			this.commandTextArray.get(4).equalsIgnoreCase("AS") &&
+			this.commandTextArray.get(5).equalsIgnoreCase("TANK")
+		) 
+		{
+			return null;
+			//return new CommandCreateStockCarTank(id);
+		}//end of rule 32
+		
+		// rule 33
+		else if
+		(
+			this.commandTextArray.get(1).equalsIgnoreCase("STOCK") &&
+			this.commandTextArray.get(2).equalsIgnoreCase("CAR") &&
+			this.commandTextArray.get(4).equalsIgnoreCase("AS") &&
+			this.commandTextArray.get(5).equalsIgnoreCase("TENDER")
+		) 
+		{
+			return null;
+			//return new CommandCreateStockCarTender(id);
+		}//end of rule 33
+		
+		// rule 34
+		else if
+		(
+			this.commandTextArray.get(1).equalsIgnoreCase("STOCK") &&
+			this.commandTextArray.get(2).equalsIgnoreCase("ENGINE") &&
+			this.commandTextArray.get(4).equalsIgnoreCase("AS") &&
+			this.commandTextArray.get(5).equalsIgnoreCase("DIESEL") &&
+			this.commandTextArray.get(6).equalsIgnoreCase("ON") &&
+			this.commandTextArray.get(7).equalsIgnoreCase("TRACK") &&
+			this.commandTextArray.get(9).equalsIgnoreCase("DISTANCE") &&
+			this.commandTextArray.get(11).equalsIgnoreCase("FROM") &&
+			this.commandTextArray.get(13).equalsIgnoreCase("FACING")
+		) 
+		{
+			return null;
+			//return new CommandCreateStockEngineDiesel();
+		}//end of rule 34
+    	
+		return null; //if nothing else, return null for now
+    
+    }//end method: parse_CREATE
     
 }//end class: CommandParser

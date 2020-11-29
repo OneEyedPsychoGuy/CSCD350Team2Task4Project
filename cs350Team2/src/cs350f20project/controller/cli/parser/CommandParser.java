@@ -382,7 +382,198 @@ public class CommandParser {
 			System.out.println("CREATE STOCK ENGINE id1 AS DIESEL ON TRACK id2 DISTANCE number FROM ( START | END ) FACING ( START | END )");
 			//return new CommandCreateStockEngineDiesel();
 		}//end of rule 34
-    	
+		
+		// rule 39
+		else if
+		(
+			this.commandTextArray.get(1).equalsIgnoreCase("TRACK") &&
+			this.commandTextArray.get(2).equalsIgnoreCase("BRIDGE") &&
+			this.commandTextArray.get(3).equalsIgnoreCase("DRAW") &&
+			this.commandTextArray.get(5).equalsIgnoreCase("REFERENCE") &&
+			this.commandTextArray.get(7).equalsIgnoreCase("DELTA") &&
+			this.commandTextArray.get(8).equalsIgnoreCase("START") &&
+			this.commandTextArray.get(10).equalsIgnoreCase("END") &&
+			this.commandTextArray.get(12).equalsIgnoreCase("ANGLE")
+		)
+		{
+			System.out.println("CREATE TRACK BRIDGE DRAW id1 REFERENCE ( coordinates_world | ( '$' id2 ) ) DELTA START coordinates_delta1 END coordinates_delta2 ANGLE angle");
+			//return new CommandCreateTrackBridgeDraw();
+		}//end of rule 39
+		
+		// rule 40
+		else if
+		(
+			this.commandTextArray.get(1).equalsIgnoreCase("TRACK") &&
+			this.commandTextArray.get(2).equalsIgnoreCase("BRIDGE") &&
+			this.commandTextArray.get(4).equalsIgnoreCase("REFERENCE") &&
+			this.commandTextArray.get(6).equalsIgnoreCase("DELTA") &&
+			this.commandTextArray.get(7).equalsIgnoreCase("START") &&
+			this.commandTextArray.get(9).equalsIgnoreCase("END")
+		)
+		{
+			System.out.println("CREATE TRACK BRIDGE id1 REFERENCE ( coordinates_world | ( '$' id2 ) ) DELTA START coordinates_delta1 END coordinates_delta2");
+			//return new CommandCreateTrackBridgeFixed();
+		}//end of rule 40
+		
+		// rule 41
+		else if
+		(
+			this.commandTextArray.get(1).equalsIgnoreCase("TRACK") &&
+			this.commandTextArray.get(2).equalsIgnoreCase("CROSSING") &&
+			this.commandTextArray.get(4).equalsIgnoreCase("REFERENCE") &&
+			this.commandTextArray.get(6).equalsIgnoreCase("DELTA") &&
+			this.commandTextArray.get(7).equalsIgnoreCase("START") &&
+			this.commandTextArray.get(9).equalsIgnoreCase("END")
+		)
+		{
+			System.out.println("CREATE TRACK CROSSING id1 REFERENCE ( coordinates_world | ( '$' id2 ) ) DELTA START coordinates_delta1 END coordinates_delta2");
+			//return new CommandCreateTrackCrossing();
+		}//end of rule 41
+		
+		// rule 42
+		else if
+		(
+			this.commandTextArray.get(1).equalsIgnoreCase("TRACK") &&
+			this.commandTextArray.get(2).equalsIgnoreCase("CROSSOVER") &&
+			this.commandTextArray.get(4).equalsIgnoreCase("REFERENCE") &&
+			this.commandTextArray.get(6).equalsIgnoreCase("DELTA") &&
+			this.commandTextArray.get(7).equalsIgnoreCase("START") &&
+			this.commandTextArray.get(9).equalsIgnoreCase("END") &&
+			this.commandTextArray.get(11).equalsIgnoreCase("START") &&
+			this.commandTextArray.get(13).equalsIgnoreCase("END")
+		)
+		{
+			System.out.println("CREATE TRACK CROSSOVER id1 REFERENCE ( coordinates_world | ( '$' id2 ) ) DELTA START coordinates_delta1 END coordinates_delta2 START coordinates_delta3 END coordinates_delta4");
+			//return new CommandCreateTrackCrossover();
+		}//end of rule 42
+		
+		// rule 43
+		else if
+		(
+			this.commandTextArray.get(1).equalsIgnoreCase("TRACK") &&
+			this.commandTextArray.get(2).equalsIgnoreCase("CURVE") &&
+			this.commandTextArray.get(4).equalsIgnoreCase("REFERENCE") &&
+			this.commandTextArray.get(6).equalsIgnoreCase("DELTA") &&
+			this.commandTextArray.get(7).equalsIgnoreCase("START") &&
+			this.commandTextArray.get(9).equalsIgnoreCase("END")
+		)
+		{
+			System.out.println("CREATE TRACK CURVE id1 REFERENCE ( coordinates_world | ( '$' id2 ) ) DELTA START coordinates_delta1 END coordinates_delta2 ( ( DISTANCE ORIGIN number ) | ( ORIGIN coordinates_delta3 ) )");
+			//return new CommandCreateTrackCurve();
+		}//end of rule 43
+		
+		// rule 44
+		else if
+		(
+			this.commandTextArray.get(1).equalsIgnoreCase("TRACK") &&
+			this.commandTextArray.get(2).equalsIgnoreCase("END") &&
+			this.commandTextArray.get(4).equalsIgnoreCase("REFERENCE") &&
+			this.commandTextArray.get(6).equalsIgnoreCase("DELTA") &&
+			this.commandTextArray.get(7).equalsIgnoreCase("START") &&
+			this.commandTextArray.get(9).equalsIgnoreCase("END")
+		)
+		{
+			System.out.println("CREATE TRACK END id1 REFERENCE ( coordinates_world | ( '$' id2 ) ) DELTA START coordinates_delta1 END coordinates_delta2");
+			//return new CommandCreateTrackEnd();
+		}//end of rule 44
+		
+		// rule 45
+		else if
+		(
+			this.commandTextArray.get(1).equalsIgnoreCase("TRACK") &&
+			this.commandTextArray.get(2).equalsIgnoreCase("LAYOUT") &&
+			this.commandTextArray.get(4).equalsIgnoreCase("WITH") &&
+			this.commandTextArray.get(5).equalsIgnoreCase("TRACKS")
+		)
+		{
+			System.out.println("CREATE TRACK LAYOUT id1 WITH TRACKS idn+");
+			//return new CommandCreateTrackLayout();
+		}//end of rule 45
+		
+		// rule 46
+		else if
+		(
+			this.commandTextArray.get(1).equalsIgnoreCase("TRACK") &&
+			this.commandTextArray.get(2).equalsIgnoreCase("ROUNDHOUSE") &&
+			this.commandTextArray.get(4).equalsIgnoreCase("REFERENCE") &&
+			this.commandTextArray.get(6).equalsIgnoreCase("DELTA") &&
+			this.commandTextArray.get(7).equalsIgnoreCase("ORIGIN") &&
+			this.commandTextArray.get(9).equalsIgnoreCase("ANGLE") &&
+			this.commandTextArray.get(10).equalsIgnoreCase("ENTRY") &&
+			this.commandTextArray.get(12).equalsIgnoreCase("START") &&
+			this.commandTextArray.get(14).equalsIgnoreCase("END") &&
+			this.commandTextArray.get(16).equalsIgnoreCase("WITH") &&
+			this.commandTextArray.get(18).equalsIgnoreCase("SPURS") &&
+			this.commandTextArray.get(19).equalsIgnoreCase("LENGTH") &&
+			this.commandTextArray.get(21).equalsIgnoreCase("TURNTABLE") &&
+			this.commandTextArray.get(22).equalsIgnoreCase("LENGTH")
+		)
+		{
+			System.out.println("CREATE TRACK ROUNDHOUSE id1 REFERENCE ( coordinates_world | ( '$' id2 ) ) DELTA ORIGIN coordinates_delta1 ANGLE ENTRY angle1 START angle2 END angle3 WITH integer SPURS LENGTH number1 TURNTABLE LENGTH number2");
+			//return new CommandCreateTrackRoundhouse();
+		}//end of rule 46
+		
+		// rule 47
+		else if
+		(
+			this.commandTextArray.get(1).equalsIgnoreCase("TRACK") &&
+			this.commandTextArray.get(2).equalsIgnoreCase("STRAIGHT") &&
+			this.commandTextArray.get(4).equalsIgnoreCase("REFERENCE") &&
+			this.commandTextArray.get(6).equalsIgnoreCase("DELTA") &&
+			this.commandTextArray.get(7).equalsIgnoreCase("START") &&
+			this.commandTextArray.get(9).equalsIgnoreCase("END")
+		)
+		{
+			System.out.println("CREATE TRACK STRAIGHT id1 REFERENCE ( coordinates_world | ( '$' id2 ) ) DELTA START coordinates_delta1 END coordinates_delta2");
+			//return new CommandCreateTrackStraight();
+		}//end of rule 47
+		
+		// rule 48
+		else if
+		(
+			this.commandTextArray.get(1).equalsIgnoreCase("TRACK") &&
+			this.commandTextArray.get(2).equalsIgnoreCase("SWITCH") &&
+			this.commandTextArray.get(3).equalsIgnoreCase("TURNOUT") &&
+			this.commandTextArray.get(5).equalsIgnoreCase("REFERENCE") &&
+			this.commandTextArray.get(7).equalsIgnoreCase("STRAIGHT") &&
+			this.commandTextArray.get(8).equalsIgnoreCase("DELTA") &&
+			this.commandTextArray.get(9).equalsIgnoreCase("START") &&
+			this.commandTextArray.get(11).equalsIgnoreCase("END") &&
+			this.commandTextArray.get(13).equalsIgnoreCase("CURVE") &&
+			this.commandTextArray.get(14).equalsIgnoreCase("DELTA") &&
+			this.commandTextArray.get(15).equalsIgnoreCase("START") &&
+			this.commandTextArray.get(17).equalsIgnoreCase("END") &&
+			this.commandTextArray.get(19).equalsIgnoreCase("DISTANCE") &&
+			this.commandTextArray.get(20).equalsIgnoreCase("ORIGIN")
+		)
+		{
+			System.out.println("CREATE TRACK SWITCH TURNOUT id1 REFERENCE ( coordinates_world | ( '$' id2 ) ) STRAIGHT DELTA START coordinates_delta1 END coordinates_delta2 CURVE DELTA START coordinates_delta3 END coordinates_delta4 DISTANCE ORIGIN number");
+			//return new CommandCreateTrackSwitchTurnout();
+		}//end of rule 48
+		
+		// rule 49
+		else if
+		(
+			this.commandTextArray.get(1).equalsIgnoreCase("TRACK") &&
+			this.commandTextArray.get(2).equalsIgnoreCase("SWITCH") &&
+			this.commandTextArray.get(3).equalsIgnoreCase("WYE") &&
+			this.commandTextArray.get(5).equalsIgnoreCase("REFERENCE") &&
+			this.commandTextArray.get(7).equalsIgnoreCase("DELTA") &&
+			this.commandTextArray.get(8).equalsIgnoreCase("START") &&
+			this.commandTextArray.get(10).equalsIgnoreCase("END") &&
+			this.commandTextArray.get(12).equalsIgnoreCase("DISTANCE") &&
+			this.commandTextArray.get(13).equalsIgnoreCase("ORIGIN") &&
+			this.commandTextArray.get(15).equalsIgnoreCase("DELTA") &&
+			this.commandTextArray.get(16).equalsIgnoreCase("START") &&
+			this.commandTextArray.get(18).equalsIgnoreCase("END") &&
+			this.commandTextArray.get(20).equalsIgnoreCase("DISTANCE") &&
+			this.commandTextArray.get(21).equalsIgnoreCase("ORIGIN")
+		)
+		{
+			System.out.println("CREATE TRACK SWITCH WYE id1 REFERENCE ( coordinates_world | ( '$' id2 ) ) DELTA START coordinates_delta1 END coordinates_delta2 DISTANCE ORIGIN number1 DELTA START coordinates_delta3 END coordinates_delta4 DISTANCE ORIGIN number2");
+			//return new CommandCreateTrackSwitchWye();
+		}//end of rule 49
+		
 		return null; //if nothing else, return null for now
     
     }//end method: parse_CREATE

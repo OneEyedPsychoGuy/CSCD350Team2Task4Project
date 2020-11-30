@@ -2,23 +2,24 @@ package cs350f20project.controller.cli.parser;
 
 import java.util.Arrays;
 import java.util.ArrayList;
-
+import java.io.File;
+import cs350f20project.controller.ActionProcessor;
+import cs350f20project.controller.cli.TrackLocator;
 import cs350f20project.controller.command.*;
 import cs350f20project.controller.command.behavioral.*;
 import cs350f20project.controller.command.creational.*;
 import cs350f20project.controller.command.meta.*;
 import cs350f20project.controller.command.structural.*;
+import cs350f20project.datatype.Angle;
 
 public class CommandParser {
 
 	// FIELDS
-	
 	private MyParserHelper parserHelper;
 	private String commandText;
 	private ArrayList<String> commandTextArray;
 
 	// CONSTRUCTORS
-	
     public CommandParser(MyParserHelper parserHelper, String commandText)
     {
         this.parserHelper = parserHelper;
@@ -52,8 +53,15 @@ public class CommandParser {
 		// rule 52
 		else if(this.commandTextArray.get(0).equalsIgnoreCase("@RUN"))
 		{
-			System.out.println("@RUN string");
-			//command = new CommandMetaDoMetaRun();
+			String file = this.commandTextArray.get(1);
+			File tempFile = new File(file);
+			if(tempFile.exists()) {
+				command = new CommandMetaDoRun(this.commandTextArray.get(1));
+			}
+			else {
+				System.out.println(file + " file does not exist.");
+			}
+			System.out.println("@RUN " + file);
 		}//end of rule 52
 		
 		// rule 55
@@ -62,12 +70,13 @@ public class CommandParser {
 			this.commandTextArray.get(0).equalsIgnoreCase("CLOSE") &&
 			this.commandTextArray.get(1).equalsIgnoreCase("VIEW")
 		)
-		{
-			System.out.println("CLOSE VIEW id");
-			//command = new CommandMetaViewDestroy();
+    	{
+			String id = this.commandTextArray.get(2);
+			command = new CommandMetaViewDestroy(id);
+			System.out.println("CLOSE VIEW " + id);
 		}//end of rule 55
 		
-		// rule 56
+		// rule 56 NEEDSFIX
 		else if
 		(
 			this.commandTextArray.get(0).equalsIgnoreCase("OPEN") &&
@@ -80,15 +89,15 @@ public class CommandParser {
 			this.commandTextArray.get(11).equalsIgnoreCase("HEIGHT")
 		)
 		{
+			////command = new CommandMetaViewGenerate(id, origin, worldWidth, screenSize)
 			System.out.println("OPEN VIEW id1 ORIGIN ( coordinates_world | ( '$' id2 ) ) WORLD WIDTH integer1 SCREEN WIDTH integer2 HEIGHT integer3");
-			//command = new CommandMetaViewGenerate();
 		}//end of rule 56
 		
 		// rule 60
 		else if(this.commandTextArray.get(0).equalsIgnoreCase("COMMIT"))
 		{
+			command = new CommandStructuralCommit();
 			System.out.println("COMMIT");
-			//command = new CommandStructuralCommit();
 		}//end of rule 60
 		
 		// rule 61
@@ -99,8 +108,10 @@ public class CommandParser {
 			this.commandTextArray.get(3).equalsIgnoreCase("AND")
 		)
 		{
-			System.out.println("COUPLE STOCK id1 AND id2");
-			//command = new CommandStructuralCouple();
+			String stock_id1 = this.commandTextArray.get(2);
+			String stock_id2 = this.commandTextArray.get(4);
+			command = new CommandStructuralCouple(stock_id1, stock_id2);
+			System.out.println("COUPLE STOCK id1:" +stock_id1+" AND id2:"+stock_id2);
 		}//end of rule 61
 		
 		// rule 62
@@ -114,8 +125,19 @@ public class CommandParser {
 			this.commandTextArray.get(8).equalsIgnoreCase("FROM")
 		)
 		{
-			System.out.println("LOCATE STOCK id1 ON TRACK id2 DISTANCE number FROM ( START | END )");
-			//command = new CommandStructuralLocate();
+			String stock_id1 = this.commandTextArray.get(2);
+			String track_id2	= this.commandTextArray.get(5);
+			double distance = Double.parseDouble(this.commandTextArray.get(7));
+			TrackLocator track_locator;
+			
+			if(this.commandTextArray.get(10).equalsIgnoreCase("START")) {
+				track_locator = new TrackLocator(track_id2, distance, true);
+			}
+			else {
+				track_locator = new TrackLocator(track_id2, distance, false);
+			}
+			command = new CommandStructuralLocate(stock_id1, track_locator);
+			System.out.println("LOCATE STOCK id1:"+stock_id1+" ON TRACK id2:"+track_id2+" DISTANCE "+distance+" FROM " + this.commandTextArray.get(10));
 		}//end of rule 62
 		
 		// rule 65
@@ -124,20 +146,26 @@ public class CommandParser {
 			this.commandTextArray.get(0).equalsIgnoreCase("UNCOUPLE") &&
 			this.commandTextArray.get(1).equalsIgnoreCase("STOCK") &&
 			this.commandTextArray.get(3).equalsIgnoreCase("AND")
-		)
-			System.out.println("UNCOUPLE STOCK id1 AND id2");
-			//command = new CommandStructuralUncouple();
-		
-		// rule 66
+		) 
+		{
+			String stock_id1 = this.commandTextArray.get(2);
+			String stock_id2 = this.commandTextArray.get(4);
+			command = new CommandStructuralUncouple(stock_id1, stock_id2);
+			System.out.println("UNCOUPLE STOCK id1:"+stock_id1+" AND id2:"+stock_id2);
+		}
+		// rule 66 NEEDSFIX
 		else if
 		(
 			this.commandTextArray.get(0).equalsIgnoreCase("USE") &&
 			this.commandTextArray.get(2).equalsIgnoreCase("AS") &&
 			this.commandTextArray.get(3).equalsIgnoreCase("REFERENCE")
-		)
-			System.out.println("USE id AS REFERENCE coordinates_world");
-			// unknown command call here. See MyParserHelper
-    	
+			
+		) 
+		{
+			String id = this.commandTextArray.get(1);
+			////command = new parserHelper(ActionProcessor x);
+			System.out.println("USE id:"+id+" AS REFERENCE coordinates_world");
+		}
 		//THIS SCHEDULES THE DESIRED COMMAND TO THE PARSERHELPER AFTER ITS BEEN PARSED
     	this.parserHelper.getActionProcessor().schedule(command);
     	
@@ -145,12 +173,13 @@ public class CommandParser {
 
     private A_Command parse_DO() 
     {
-    	
+    	A_Command command = null;
     	// rule 2
 		if(this.commandTextArray.get(1).equalsIgnoreCase("BRAKE"))
 		{
-			System.out.println("DO BRAKE id");
-			//return new CommandBehavioralBrake(id);
+			String id = this.commandTextArray.get(2);
+			command = new CommandBehavioralBrake(id);
+			System.out.println("DO BRAKE id:" + id);
 		}//end of rule 2
 		
 		// rule 6
@@ -161,11 +190,19 @@ public class CommandParser {
 			this.commandTextArray.get(4).equalsIgnoreCase("POSITION")
 		)
 		{
-			System.out.println("DO SELECT DRAWBRIDGE id POSITION ( UP | DOWN )");
-			//return new CommandBehavioralSelectBridge(id, UPorDOWN);
+			String id = this.commandTextArray.get(3);
+			boolean UPorDOWN;
+			
+			if(this.commandTextArray.get(5).equalsIgnoreCase("UP")) {
+				UPorDOWN = true;
+			}else {
+				UPorDOWN = false;
+			}
+			command = new CommandBehavioralSelectBridge(id, UPorDOWN);
+			System.out.println("DO SELECT DRAWBRIDGE id:"+id+" POSITION " + this.commandTextArray.get(5));
 		}//end of rule 6
 		
-		// rule 7
+		// rule 7 NEEDSFIX command.execute()?
 		else if
 		(
 			this.commandTextArray.get(1).equalsIgnoreCase("SELECT") &&
@@ -173,8 +210,17 @@ public class CommandParser {
 			this.commandTextArray.get(4).equalsIgnoreCase("POSITION")
 		)
 		{
-			System.out.println("DO SELECT ROUNDHOUSE id POSITION angle ( CLOCKWISE | COUNTERCLOCKWISE )");
-			//return new CommandBehavioralSelectRoundhouse(id, angle, clockWise);
+			String id = this.commandTextArray.get(3);
+			double angleNum = Double.parseDouble(this.commandTextArray.get(5));
+			Angle angle = new Angle(angleNum);
+			boolean clockWise = false;
+			if(this.commandTextArray.get(6).equalsIgnoreCase("CLOCKWISE")) {
+				clockWise = true;
+			}else if(this.commandTextArray.get(6).equalsIgnoreCase("COUNTERCLOCKWISE")) {
+				clockWise = false;
+			}
+			command = new CommandBehavioralSelectRoundhouse(id, angle, clockWise);
+			System.out.println("DO SELECT ROUNDHOUSE id:"+id+" POSITION angle:"+angle+" "+this.commandTextArray.get(6));
 		}//end of rule 7
 		
 		// rule 8
@@ -185,8 +231,16 @@ public class CommandParser {
 			this.commandTextArray.get(4).equalsIgnoreCase("PATH")
 		) 
 		{
-			System.out.println("DO SELECT SWITCH id PATH ( PRIMARY | SECONDARY )");
-			//return new CommandBehavioralSelectSwitch(id, primaryorSecondary);
+			String id = this.commandTextArray.get(3);
+			boolean primaryorSecondary;
+			if(this.commandTextArray.get(5).equalsIgnoreCase("PRIMARY")) {
+				primaryorSecondary = true;
+			}else {
+				primaryorSecondary = false;
+			}
+			command = new CommandBehavioralSelectSwitch(id, primaryorSecondary);
+			System.out.println("DO SELECT SWITCH id:"+id+" PATH "+ this.commandTextArray.get(5));
+			
 		}//end of rule 8
 		
 		// rule 11
@@ -196,8 +250,15 @@ public class CommandParser {
 			this.commandTextArray.get(3).equalsIgnoreCase("DIRECTION")
 		) 
 		{
-			System.out.println("DO SET id DIRECTION ( FORWARD | BACKWARD ) ");
-			//return new CommandBehavioralSetDirection(id, forwardOrBackwards);
+			String id = this.commandTextArray.get(2);
+			boolean forwardOrBackwards;
+			if(this.commandTextArray.get(4).equalsIgnoreCase("FORWARD")) {
+				forwardOrBackwards = true;
+			} else {
+				forwardOrBackwards = false;
+			}
+			command = new CommandBehavioralSetDirection(id, forwardOrBackwards);
+			System.out.println("DO SET id:"+id+" DIRECTION "+this.commandTextArray.get(4));
 		}//end of rule 11
 		
 		// rule 12
@@ -208,8 +269,9 @@ public class CommandParser {
 			this.commandTextArray.get(3).equalsIgnoreCase("ENGINE")
 		)
 		{
-			System.out.println("DO SET REFERENCE ENGINE id");
-			//return new CommandBehavioralSetReference(id);
+			String id = this.commandTextArray.get(4);
+			command = new CommandBehavioralSetReference(id);
+			System.out.println("DO SET REFERENCE ENGINE id:"+id);
 		}//end of rule 12
 		
 		// rule 15
@@ -219,17 +281,19 @@ public class CommandParser {
 			this.commandTextArray.get(3).equalsIgnoreCase("SPEED") 
 		) 
 		{
-			System.out.println("DO SET id SPEED number");
-			//return new CommandBehavioralSetSpeed(id, number);
+			String id = this.commandTextArray.get(2);
+			double number = Double.parseDouble(this.commandTextArray.get(4));
+			command = new CommandBehavioralSetSpeed(id, number);
+			System.out.println("DO SET id:"+id+" SPEED "+number);
 		}// end of rule 15
 		
-		return null; //if nothing else, return null for now
+		return command; //if nothing else, return null for now
 		
     }//end method: parse_DO
     
     private A_Command parse_CREATE() 
     {
-    	
+    	A_Command command = null;
     	// rule 22
 		if
 		(
@@ -239,8 +303,13 @@ public class CommandParser {
 			this.commandTextArray.get(5).equalsIgnoreCase("POLES")
 		) 
 		{
-			System.out.println("CREATE POWER CATENARY id1 WITH POLES idn+");
-			//return new CommandCreatePowerCatenary(idl, id_POLES);
+			String id1 = this.commandTextArray.get(3);
+			ArrayList<String> id_POLES = new ArrayList<String>();
+			for(int i = 6; i < this.commandTextArray.size(); i++) {
+				id_POLES.add(this.commandTextArray.get(i));
+			}
+			command = new CommandCreatePowerCatenary(id1, id_POLES);
+			System.out.println("CREATE POWER CATENARY id1:"+id1+" WITH POLES "+id_POLES.toString());
 		}//end of rule 22
 		
 		// rule 23
@@ -254,11 +323,21 @@ public class CommandParser {
 			this.commandTextArray.get(9).equalsIgnoreCase("FROM")
 		) 
 		{
-			System.out.println("CREATE POWER POLE id1 ON TRACK id2 DISTANCE number FROM ( START | END )");
-			//return new CommandCreatePowerPole(pole_ID, track_locator);
+			String pole_ID = this.commandTextArray.get(3);
+			String track_ID = this.commandTextArray.get(6);
+			double distance =  Double.parseDouble(commandTextArray.get(8));
+			TrackLocator track_locator;
+			if(this.commandTextArray.get(10).equalsIgnoreCase("START")) {
+				track_locator = new TrackLocator(track_ID, distance, true);
+			}
+			else {
+				track_locator = new TrackLocator(track_ID, distance, false);
+			}
+			command = new CommandCreatePowerPole(pole_ID, track_locator);
+			System.out.println("CREATE POWER POLE id:"+pole_ID+" ON TRACK id:"+track_ID+" DISTANCE "+distance+" FROM " +this.commandTextArray.get(10));
 		}//end of rule 23
 		
-		// rule 24
+		// rule 24 NEEDSFIX
 		else if
 		(
 			this.commandTextArray.get(1).equalsIgnoreCase("POWER") &&
@@ -268,11 +347,11 @@ public class CommandParser {
 			this.commandTextArray.get(8).equalsIgnoreCase("WITH")
 		)
 		{
-			System.out.println("CREATE POWER STATION id1 REFERENCE ( coordinates_world | ( '$' id2 ) ) DELTA coordinates_delta WITH ( SUBSTATION | SUBSTATIONS ) idn+");
-			//return new CommandCreatePowerStation();
+			String station_ID = this.commandTextArray.get(3);
+			System.out.println("CREATE POWER STATION id1:"+station_ID+" REFERENCE ( coordinates_world | ( '$' id2 ) ) DELTA coordinates_delta WITH ( SUBSTATION | SUBSTATIONS ) idn+");
 		}//end of rule 24
     	
-		// rule 25
+		// rule 25 NEEDSFIX
 		else if
 		(
 			this.commandTextArray.get(1).equalsIgnoreCase("POWER") &&
@@ -283,8 +362,9 @@ public class CommandParser {
 			this.commandTextArray.get(9).equalsIgnoreCase("CATENARIES")
 		)
 		{
-			System.out.println("CREATE POWER SUBSTATION id1 REFERENCE ( coordinates_world | ( '$' id2 ) ) DELTA coordinates_delta WITH CATENARIES idn+");
-			//return new CommandCreatePowerSubstation();
+			String substation_ID = this.commandTextArray.get(3);
+			////command = new CommandCreatePowerSubstation(substation_ID, reference, delta, idCatenaries);
+			System.out.println("CREATE POWER SUBSTATION id:"+substation_ID+" REFERENCE ( coordinates_world | ( '$' id2 ) ) DELTA coordinates_delta WITH CATENARIES idn+");
 		}// end of rule 25
 		
 		// rule 28
@@ -296,8 +376,9 @@ public class CommandParser {
 			this.commandTextArray.get(5).equalsIgnoreCase("BOX")
 		) 
 		{
-			System.out.println("CREATE STOCK CAR id AS BOX");
-			//return new CommandCreateStockCarBox(id);
+			String stockboxCar_ID = this.commandTextArray.get(3);
+			command = new CommandCreateStockCarBox(stockboxCar_ID);
+			System.out.println("CREATE STOCK CAR id:"+stockboxCar_ID+" AS BOX");
 		}//end of rule 28
 		
 		// rule 29
@@ -309,8 +390,9 @@ public class CommandParser {
 			this.commandTextArray.get(5).equalsIgnoreCase("CABOOSE")
 		) 
 		{
-			System.out.println("CREATE STOCK CAR id AS CABOOSE");
-			//return new CommandCreateStockCarCaboose(id);
+			String stockCabooseCar_ID = this.commandTextArray.get(3);
+			command = new CommandCreateStockCarCaboose(stockCabooseCar_ID);
+			System.out.println("CREATE STOCK CAR id:"+stockCabooseCar_ID+" AS CABOOSE");
 		}//end of rule 29
 		
 		// rule 30
@@ -322,8 +404,9 @@ public class CommandParser {
 			this.commandTextArray.get(5).equalsIgnoreCase("FLATBED")
 		) 
 		{
-			System.out.println("CREATE STOCK CAR id AS FLATBED");
-			//return new CommandCreateStockCarFlatbed(id);
+			String flatbedCar_ID = this.commandTextArray.get(3);
+			command = new CommandCreateStockCarFlatbed(flatbedCar_ID);
+			System.out.println("CREATE STOCK CAR id:"+flatbedCar_ID+" AS FLATBED");
 		}//end of rule 30
 		
 		// rule 31
@@ -335,8 +418,9 @@ public class CommandParser {
 			this.commandTextArray.get(5).equalsIgnoreCase("PASSENGER")
 		) 
 		{
-			System.out.println("CREATE STOCK CAR id AS PASSENGER");
-			//return new CommandCreateStockCarPassenger(id);
+			String passengerCar_ID = this.commandTextArray.get(3);
+			command = new CommandCreateStockCarPassenger(passengerCar_ID);
+			System.out.println("CREATE STOCK CAR id:"+passengerCar_ID+" AS PASSENGER");
 		}//end of rule 31
 		
 		// rule 32
@@ -348,8 +432,9 @@ public class CommandParser {
 			this.commandTextArray.get(5).equalsIgnoreCase("TANK")
 		) 
 		{
-			System.out.println("CREATE STOCK CAR id AS TANK");
-			//return new CommandCreateStockCarTank(id);
+			String tankCar_ID = this.commandTextArray.get(3);
+			command = new CommandCreateStockCarTank(tankCar_ID);
+			System.out.println("CREATE STOCK CAR id:"+tankCar_ID+" AS TANK");
 		}//end of rule 32
 		
 		// rule 33
@@ -361,8 +446,9 @@ public class CommandParser {
 			this.commandTextArray.get(5).equalsIgnoreCase("TENDER")
 		) 
 		{
-			System.out.println("CREATE STOCK CAR id AS TENDER");
-			//return new CommandCreateStockCarTender(id);
+			String stockCar_tender_id = this.commandTextArray.get(3);
+			command = new CommandCreateStockCarTender(stockCar_tender_id);
+			System.out.println("CREATE STOCK CAR id:"+stockCar_tender_id+" AS TENDER");
 		}//end of rule 33
 		
 		// rule 34
@@ -379,11 +465,25 @@ public class CommandParser {
 			this.commandTextArray.get(13).equalsIgnoreCase("FACING")
 		) 
 		{
-			System.out.println("CREATE STOCK ENGINE id1 AS DIESEL ON TRACK id2 DISTANCE number FROM ( START | END ) FACING ( START | END )");
-			//return new CommandCreateStockEngineDiesel();
+			String engine_ID = this.commandTextArray.get(3);
+			String track_ID = this.commandTextArray.get(8);
+			double distance = Double.parseDouble(this.commandTextArray.get(10));
+			boolean isFacingStart = false;
+			TrackLocator track_locator;	
+			if(this.commandTextArray.get(12).equalsIgnoreCase("START")) {
+				track_locator = new TrackLocator(track_ID, distance, true);
+			}
+			else {
+				track_locator = new TrackLocator(track_ID, distance, false);
+			}
+			if(this.commandTextArray.get(14).equalsIgnoreCase("START")) {
+				isFacingStart=true;
+			}
+			command = new CommandCreateStockEngineDiesel(engine_ID, track_locator, isFacingStart);
+			System.out.println("CREATE STOCK ENGINE id:"+engine_ID+" AS DIESEL ON TRACK id:"+track_ID+" DISTANCE "+distance+" "+this.commandTextArray.get(12)+" FACING "+ this.commandTextArray.get(14));
 		}//end of rule 34
 		
-		// rule 39
+		// rule 39 NEEDSFIX
 		else if
 		(
 			this.commandTextArray.get(1).equalsIgnoreCase("TRACK") &&
@@ -397,10 +497,9 @@ public class CommandParser {
 		)
 		{
 			System.out.println("CREATE TRACK BRIDGE DRAW id1 REFERENCE ( coordinates_world | ( '$' id2 ) ) DELTA START coordinates_delta1 END coordinates_delta2 ANGLE angle");
-			//return new CommandCreateTrackBridgeDraw();
 		}//end of rule 39
 		
-		// rule 40
+		// rule 40 NEEDSFIX
 		else if
 		(
 			this.commandTextArray.get(1).equalsIgnoreCase("TRACK") &&
@@ -412,10 +511,9 @@ public class CommandParser {
 		)
 		{
 			System.out.println("CREATE TRACK BRIDGE id1 REFERENCE ( coordinates_world | ( '$' id2 ) ) DELTA START coordinates_delta1 END coordinates_delta2");
-			//return new CommandCreateTrackBridgeFixed();
 		}//end of rule 40
 		
-		// rule 41
+		// rule 41 NEEDSFIX
 		else if
 		(
 			this.commandTextArray.get(1).equalsIgnoreCase("TRACK") &&
@@ -430,7 +528,7 @@ public class CommandParser {
 			//return new CommandCreateTrackCrossing();
 		}//end of rule 41
 		
-		// rule 42
+		// rule 42 NEEDSFIX
 		else if
 		(
 			this.commandTextArray.get(1).equalsIgnoreCase("TRACK") &&
@@ -444,7 +542,6 @@ public class CommandParser {
 		)
 		{
 			System.out.println("CREATE TRACK CROSSOVER id1 REFERENCE ( coordinates_world | ( '$' id2 ) ) DELTA START coordinates_delta1 END coordinates_delta2 START coordinates_delta3 END coordinates_delta4");
-			//return new CommandCreateTrackCrossover();
 		}//end of rule 42
 		
 		// rule 43
@@ -459,10 +556,9 @@ public class CommandParser {
 		)
 		{
 			System.out.println("CREATE TRACK CURVE id1 REFERENCE ( coordinates_world | ( '$' id2 ) ) DELTA START coordinates_delta1 END coordinates_delta2 ( ( DISTANCE ORIGIN number ) | ( ORIGIN coordinates_delta3 ) )");
-			//return new CommandCreateTrackCurve();
 		}//end of rule 43
 		
-		// rule 44
+		// rule 44 NEEDSFIX
 		else if
 		(
 			this.commandTextArray.get(1).equalsIgnoreCase("TRACK") &&
@@ -474,10 +570,9 @@ public class CommandParser {
 		)
 		{
 			System.out.println("CREATE TRACK END id1 REFERENCE ( coordinates_world | ( '$' id2 ) ) DELTA START coordinates_delta1 END coordinates_delta2");
-			//return new CommandCreateTrackEnd();
 		}//end of rule 44
 		
-		// rule 45
+		// rule 45 NEEDSFIX
 		else if
 		(
 			this.commandTextArray.get(1).equalsIgnoreCase("TRACK") &&
@@ -487,10 +582,9 @@ public class CommandParser {
 		)
 		{
 			System.out.println("CREATE TRACK LAYOUT id1 WITH TRACKS idn+");
-			//return new CommandCreateTrackLayout();
 		}//end of rule 45
 		
-		// rule 46
+		// rule 46 NEEDSFIX
 		else if
 		(
 			this.commandTextArray.get(1).equalsIgnoreCase("TRACK") &&
@@ -510,10 +604,9 @@ public class CommandParser {
 		)
 		{
 			System.out.println("CREATE TRACK ROUNDHOUSE id1 REFERENCE ( coordinates_world | ( '$' id2 ) ) DELTA ORIGIN coordinates_delta1 ANGLE ENTRY angle1 START angle2 END angle3 WITH integer SPURS LENGTH number1 TURNTABLE LENGTH number2");
-			//return new CommandCreateTrackRoundhouse();
 		}//end of rule 46
 		
-		// rule 47
+		// rule 47 NEEDSFIX
 		else if
 		(
 			this.commandTextArray.get(1).equalsIgnoreCase("TRACK") &&
@@ -525,10 +618,9 @@ public class CommandParser {
 		)
 		{
 			System.out.println("CREATE TRACK STRAIGHT id1 REFERENCE ( coordinates_world | ( '$' id2 ) ) DELTA START coordinates_delta1 END coordinates_delta2");
-			//return new CommandCreateTrackStraight();
 		}//end of rule 47
 		
-		// rule 48
+		// rule 48 NEEDSFIX
 		else if
 		(
 			this.commandTextArray.get(1).equalsIgnoreCase("TRACK") &&
@@ -548,10 +640,9 @@ public class CommandParser {
 		)
 		{
 			System.out.println("CREATE TRACK SWITCH TURNOUT id1 REFERENCE ( coordinates_world | ( '$' id2 ) ) STRAIGHT DELTA START coordinates_delta1 END coordinates_delta2 CURVE DELTA START coordinates_delta3 END coordinates_delta4 DISTANCE ORIGIN number");
-			//return new CommandCreateTrackSwitchTurnout();
 		}//end of rule 48
 		
-		// rule 49
+		// rule 49 NEEDSFIX
 		else if
 		(
 			this.commandTextArray.get(1).equalsIgnoreCase("TRACK") &&
@@ -571,10 +662,9 @@ public class CommandParser {
 		)
 		{
 			System.out.println("CREATE TRACK SWITCH WYE id1 REFERENCE ( coordinates_world | ( '$' id2 ) ) DELTA START coordinates_delta1 END coordinates_delta2 DISTANCE ORIGIN number1 DELTA START coordinates_delta3 END coordinates_delta4 DISTANCE ORIGIN number2");
-			//return new CommandCreateTrackSwitchWye();
 		}//end of rule 49
 		
-		return null; //if nothing else, return null for now
+		return command; //if nothing else, return null for now
     
     }//end method: parse_CREATE
     

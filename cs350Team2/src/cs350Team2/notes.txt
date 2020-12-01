@@ -1,0 +1,2 @@
+Test Commands
+@run        /home/mia/Scripts/spotifynotification.sh    ;        create    stock    car     car1    as  box      ;      create  stock   car car2    as  caboose

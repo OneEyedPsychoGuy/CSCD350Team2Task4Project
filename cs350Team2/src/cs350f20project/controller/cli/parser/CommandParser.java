@@ -14,6 +14,8 @@ import java.util.Arrays;
 
 public class CommandParser {
 
+	//COMMANDS THAT NEED FIXING: 56, 66, 7?, 24-25, 39-49
+	
 	// FIELDS
 	private MyParserHelper parserHelper;
 	private String commandText;
@@ -27,8 +29,7 @@ public class CommandParser {
         this.commandText = commandText;
         if(commandText.contains(";")) {
         	this.semicolonCommandsArray = this.commandText.split("\s*;\s*");
-        	// debug print statement
-			System.out.println("semiColonCommandsArray: "+ Arrays.toString(semicolonCommandsArray));
+			System.out.println("semiColonCommandsArray: "+ Arrays.toString(semicolonCommandsArray)); //debug print statement
         }
         this.commandTextArray = this.commandText.split("\\s+");
         System.out.println("USING TEAM 2 COMMAND PARSER"); //this makes sure that we are using our CommandParser class
@@ -179,9 +180,11 @@ public class CommandParser {
 			////command = new parserHelper(ActionProcessor x);
 			System.out.println("USE id:"+id+" AS REFERENCE coordinates_world");
 		}
+		
+		// FINAL CHECK
 		if (command == null) {
 			System.out.println("Invalid command");
-		}else {
+		} else {
 			//THIS SCHEDULES THE DESIRED COMMAND TO THE PARSERHELPER AFTER ITS BEEN PARSED
 			this.parserHelper.getActionProcessor().schedule(command);
 		}
@@ -219,7 +222,7 @@ public class CommandParser {
 			System.out.println("DO SELECT DRAWBRIDGE id:"+id+" POSITION " + this.commandTextArray[5]);
 		}//end of rule 6
 		
-		// rule 7 NEEDSFIX command.execute()?
+		// rule 7 NEEDSFIX
 		else if
 		(
 			this.commandTextArray[1].equalsIgnoreCase("SELECT") &&

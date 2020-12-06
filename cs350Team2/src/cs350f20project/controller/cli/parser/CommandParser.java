@@ -6,7 +6,7 @@ import cs350f20project.controller.command.behavioral.*;
 import cs350f20project.controller.command.creational.*;
 import cs350f20project.controller.command.meta.*;
 import cs350f20project.controller.command.structural.*;
-import cs350f20project.datatype.Angle;
+import cs350f20project.datatype.*;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -20,13 +20,13 @@ public class CommandParser {
 	private String[] commandTextArray;
 	private String[] semicolonCommandsArray = null;
 
-	// CONSTRUCTORS
+	// CONSTRUCTOR
     public CommandParser(MyParserHelper parserHelper, String commandText)
     {
         this.parserHelper = parserHelper;
         this.commandText = commandText;
         if(commandText.contains(";")) {
-        	this.semicolonCommandsArray = this.commandText.split("\s*;\s*");
+        	this.semicolonCommandsArray = this.commandText.split("\\s*;\\s*");
         	// debug print statement
 			System.out.println("semiColonCommandsArray: "+ Arrays.toString(semicolonCommandsArray));
         }
@@ -35,7 +35,7 @@ public class CommandParser {
     }//end constructor
 
 	public void parse() {
-		// rule 1
+		// rule 1 rule 65
 		if(semicolonCommandsArray!=null) {
 			for (int i = 0; i < semicolonCommandsArray.length; i++) {
 				this.commandTextArray = semicolonCommandsArray[i].split("\\s+");
@@ -45,6 +45,32 @@ public class CommandParser {
 			}
 		}
 		parseCommands();
+	}
+
+	// CoordinatesDelta(double x, double y)
+   	public CoordinatesDelta parseCoordDelta(String coords) {
+    	CoordinatesDelta coordinates = null;
+    	if(coords.contains(":")) {
+			String[] coordArr = coords.split(":");
+
+		}
+    	return coordinates;
+	}
+	// CoordinatesWorld(Latitude latitude, Longitude longitude)
+	public CoordinatesWorld parseCoordWorld(String coords) {
+		CoordinatesWorld coordWorld = null;
+		return coordWorld;
+	}
+
+	// Latitude(int degrees, int minutes, double seconds)
+	public Latitude parseLatitude(String lat) {
+		Latitude latitude = null;
+		return latitude;
+	}
+	//  Longitude(int degrees, int minutes, double seconds)
+	public Longitude parseLongitude(String longitudeStr ) {
+		Longitude longitude = null;
+		return longitude;
 	}
 
 	// PARSE METHODS

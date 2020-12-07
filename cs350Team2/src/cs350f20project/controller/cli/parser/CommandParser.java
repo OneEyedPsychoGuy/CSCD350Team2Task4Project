@@ -330,20 +330,13 @@ public class CommandParser {
 		{
 			String id = this.commandTextArray[1];
             String coordStr = this.commandTextArray[4];
-            if(!parserHelper.hasReference(id)) {
-                CoordinatesWorld coordinates = this.parseCoordWorld(coordStr);
-                if (coordinates!=null) {
-                   parserHelper.addReference(id, coordinates);
-					System.out.println("USE id:"+id+" AS REFERENCE coordinates_world");
-                }
-                else {
-                    System.out.println("Invalid command");
-                }
+            CoordinatesWorld coordinates = this.parseCoordWorld(coordStr);
+            if (coordinates!=null) {
+    	        this.parserHelper.addReference(id, coordinates);
+				System.out.println("USE id:"+id+" AS REFERENCE:"+ coordinates);
             }
-            else {
-				System.out.println("Cannot set "+id+" as reference id for "+coordStr+".\n Reference id:"+id+" is already in use.");
-			}
 		}//end of rule 66
+
 		// FINAL CHECK
 		if (command == null) {
 			System.out.println("Invalid command");
@@ -550,7 +543,7 @@ public class CommandParser {
         )
 		{
 			String station_ID = this.commandTextArray[3];
-            CoordinatesWorld reference = this.parseCoordWorld(this.commandTextArray[5]);
+            CoordinatesWorld reference = this.parseReferenceOrCoordWorld(this.commandTextArray[5]);
 			CoordinatesDelta deltaCoord= this.parseCoordDelta(this.commandTextArray[7]);
 			if (reference!=null && deltaCoord!=null) {
 				ArrayList<String> substation_IDs = new ArrayList<>();
@@ -575,7 +568,7 @@ public class CommandParser {
 		)
 		{
 			String substation_ID = this.commandTextArray[3];
-			CoordinatesWorld reference = this.parseCoordWorld(this.commandTextArray[5]);
+			CoordinatesWorld reference = this.parseReferenceOrCoordWorld(this.commandTextArray[5]);
 			CoordinatesDelta deltaCoord= this.parseCoordDelta(this.commandTextArray[7]);
 			if (reference!=null && deltaCoord!=null) {
 				ArrayList<String> catenary_IDs= new ArrayList<>();
@@ -725,7 +718,7 @@ public class CommandParser {
 		)
 		{
 			String id = this.commandTextArray[4];
-			CoordinatesWorld reference = this.parseCoordWorld(this.commandTextArray[6]);
+			CoordinatesWorld reference = this.parseReferenceOrCoordWorld(this.commandTextArray[6]);
 			CoordinatesDelta deltaStart = this.parseCoordDelta(this.commandTextArray[9]);
 			CoordinatesDelta deltaEnd = this.parseCoordDelta(this.commandTextArray[11]);
 			PointLocator locator = null;
@@ -736,7 +729,7 @@ public class CommandParser {
 			Angle angle = this.parseAngle(angleStr);
 			if (locator!=null && angle != null) {
 				command = new CommandCreateTrackBridgeDraw(id, locator, angle);
-				System.out.println("CREATE TRACK BRIDGE DRAW:"+ id+" REFERENCE:"+reference+"  DELTA START:"+deltaStart+" END:"+deltaEnd+" ANGLE:" + angle);
+				System.out.println("CREATE TRACK BRIDGE DRAW id:"+ id+" REFERENCE:"+reference+" DELTA START:"+deltaStart+" END:"+deltaEnd+" ANGLE:" + angle);
 			}
 		}//end of rule 39
 
@@ -753,7 +746,7 @@ public class CommandParser {
 		)
 		{
 			String id = this.commandTextArray[3];
-			CoordinatesWorld reference = this.parseCoordWorld(this.commandTextArray[5]);
+			CoordinatesWorld reference = this.parseReferenceOrCoordWorld(this.commandTextArray[5]);
 			CoordinatesDelta deltaStart = this.parseCoordDelta(this.commandTextArray[8]);
 			CoordinatesDelta deltaEnd = this.parseCoordDelta(this.commandTextArray[10]);
 			PointLocator locator = null;
@@ -779,7 +772,7 @@ public class CommandParser {
 		)
 		{
 			String id = this.commandTextArray[3];
-			CoordinatesWorld reference = this.parseCoordWorld(this.commandTextArray[5]);
+			CoordinatesWorld reference = this.parseReferenceOrCoordWorld(this.commandTextArray[5]);
 			CoordinatesDelta deltaStart = this.parseCoordDelta(this.commandTextArray[8]);
 			CoordinatesDelta deltaEnd = this.parseCoordDelta(this.commandTextArray[10]);
 			PointLocator locator = null;
@@ -807,19 +800,18 @@ public class CommandParser {
 		)
 		{
 			String id = this.commandTextArray[3];
-			CoordinatesWorld reference = this.parseCoordWorld(this.commandTextArray[5]);
+			CoordinatesWorld reference = this.parseReferenceOrCoordWorld(this.commandTextArray[5]);
 			CoordinatesDelta deltaStart1 = this.parseCoordDelta(this.commandTextArray[8]);
 			CoordinatesDelta deltaEnd1 = this.parseCoordDelta(this.commandTextArray[10]);
-			CoordinatesDelta deltaStart2 = this.parseCoordDelta(this.commandTextArray[8]);
-			CoordinatesDelta deltaEnd2 = this.parseCoordDelta(this.commandTextArray[10]);
-			PointLocator locator = null;
+			CoordinatesDelta deltaStart2 = this.parseCoordDelta(this.commandTextArray[12]);
+			CoordinatesDelta deltaEnd2 = this.parseCoordDelta(this.commandTextArray[14]);
 			if (reference!=null && deltaStart1!=null && deltaEnd1!=null && deltaStart2!=null && deltaEnd2!=null) {
 				command = new CommandCreateTrackCrossover(id, reference, deltaStart1, deltaEnd1, deltaStart2, deltaEnd2);
 				System.out.println("CREATE TRACK CROSSOVER:"+ id +" REFERENCE:"+reference+" DELTA START:"+deltaStart1+" END:"+ deltaEnd1 +" START:"+deltaStart2+" END:"+deltaEnd2);
 			}
 		}//end of rule 42
 
-		// rule 43 NEEDSFIX
+		// rule 43 FIXED
 		else if
 		(
 			this.commandTextArray.length>=13 &&
@@ -834,24 +826,29 @@ public class CommandParser {
 		)
 		{
 			String id = this.commandTextArray[3];
-			CoordinatesWorld reference = this.parseCoordWorld(this.commandTextArray[5]);
+			CoordinatesWorld reference = this.parseReferenceOrCoordWorld(this.commandTextArray[5]);
 			CoordinatesDelta deltaStart = this.parseCoordDelta(this.commandTextArray[8]);
 			CoordinatesDelta deltaEnd = this.parseCoordDelta(this.commandTextArray[10]);
-			if ((this.commandTextArray[11].equalsIgnoreCase("DISTANCE")) {
-			    String numStr = this.commandTextArray[13];
-			    if (numStr.matches(DOUBLE_REGEX)) {
-
+			if (reference!=null && deltaStart!=null && deltaEnd!=null) {
+				if (this.commandTextArray[11].equalsIgnoreCase("DISTANCE")) {
+			    	String numStr = this.commandTextArray[13];
+			    	if (numStr.matches(DOUBLE_REGEX)) {
+			    		double deltaOrigin = Double.parseDouble(numStr);
+						command = new CommandCreateTrackCurve(id, reference, deltaStart, deltaEnd, deltaOrigin);
+						System.out.println("CREATE TRACK CURVE id:"+id+" REFERENCE:"+reference+" DELTA START:"+deltaStart+" END:"+deltaEnd+ " DISTANCE ORIGIN "+ deltaOrigin);
+					}
+				}
+				else if (this.commandTextArray[11].equalsIgnoreCase("ORIGIN")) {
+					CoordinatesDelta origin = this.parseCoordDelta(this.commandTextArray[12]);
+					if (origin != null) {
+						command = new CommandCreateTrackCurve(id, reference, deltaStart, deltaEnd, origin);
+						System.out.println("CREATE TRACK CURVE id:"+id+" REFERENCE:"+reference+" DELTA START:"+deltaStart+" END:"+deltaEnd+ " ORIGIN "+ origin);
+					}
 				}
 			}
-			else if (this.commandTextArray[11].equalsIgnoreCase("ORIGIN")) {
-
-			}
-				this.commandTextArray[11].equalsIgnoreCase("ORIGIN"))
-		    command = new CommandCreateTrackCurve(id, reference, deltaStart, deltaEnd, deltaOrigin);
-			System.out.println("CREATE TRACK CURVE id1 REFERENCE ( coordinates_world | ( '$' id2 ) ) DELTA START coordinates_delta1 END coordinates_delta2 ( ( DISTANCE ORIGIN number ) | ( ORIGIN coordinates_delta3 ) )");
 		}//end of rule 43
 
-		// rule 44 NEEDSFIX
+		// rule 44 FIXED
 		else if
 		(
 			this.commandTextArray.length>=11 &&
@@ -863,10 +860,18 @@ public class CommandParser {
 			this.commandTextArray[9].equalsIgnoreCase("END")
 		)
 		{
-			System.out.println("CREATE TRACK END id1 REFERENCE ( coordinates_world | ( '$' id2 ) ) DELTA START coordinates_delta1 END coordinates_delta2");
+		    String id  = this.commandTextArray[3];
+		    CoordinatesWorld reference = this.parseReferenceOrCoordWorld(this.commandTextArray[5]);
+			CoordinatesDelta deltaStart = this.parseCoordDelta(this.commandTextArray[8]);
+			CoordinatesDelta deltaEnd = this.parseCoordDelta(this.commandTextArray[10]);
+			if (reference!=null && deltaStart!=null && deltaEnd!=null) {
+				PointLocator locator = new PointLocator(reference, deltaStart, deltaEnd);
+				command = new CommandCreateTrackEnd(id, locator);
+				System.out.println("CREATE TRACK END id:" + id + " REFERENCE:" + reference + " DELTA START:" + deltaStart + " END:" + deltaEnd);
+			}
 		}//end of rule 44
 
-		// rule 45 NEEDSFIX
+		// rule 45 FIXED
 		else if
 		(
 			this.commandTextArray.length>=7 &&
@@ -876,10 +881,16 @@ public class CommandParser {
 			this.commandTextArray[5].equalsIgnoreCase("TRACKS")
 		)
 		{
-			System.out.println("CREATE TRACK LAYOUT id1 WITH TRACKS idn+");
+			String id = this.commandTextArray[3];
+			ArrayList<String> track_IDs = new ArrayList<>();
+			for (int i = 6; i < this.commandTextArray.length; i++) {
+				track_IDs.add(this.commandTextArray[i]);
+			}
+			command = new CommandCreateTrackLayout(id, track_IDs);
+			System.out.println("CREATE TRACK LAYOUT id:"+id+" WITH TRACKS:"+ track_IDs);
 		}//end of rule 45
 
-		// rule 46 NEEDSFIX
+		// rule 46 FIXED
 		else if
 		(
 			this.commandTextArray.length>=23 &&
@@ -899,10 +910,23 @@ public class CommandParser {
 			this.commandTextArray[22].equalsIgnoreCase("LENGTH")
 		)
 		{
-			System.out.println("CREATE TRACK ROUNDHOUSE id1 REFERENCE ( coordinates_world | ( '$' id2 ) ) DELTA ORIGIN coordinates_delta1 ANGLE ENTRY angle1 START angle2 END angle3 WITH integer SPURS LENGTH number1 TURNTABLE LENGTH number2");
+			String id = this.commandTextArray[3];
+			CoordinatesWorld reference = this.parseReferenceOrCoordWorld(this.commandTextArray[5]);
+			CoordinatesDelta deltaOrigin = this.parseCoordDelta(this.commandTextArray[8]);
+			Angle angleEntry = this.parseAngle(this.commandTextArray[11]);
+			Angle angleStart = this.parseAngle(this.commandTextArray[13]);
+			Angle angleEnd = this.parseAngle(this.commandTextArray[15]);
+			String numStr = this.commandTextArray[17], spurLenStr = this.commandTextArray[20], turnLenStr = this.commandTextArray[23];
+			if (numStr.matches(INT_REGEX) && spurLenStr.matches(DOUBLE_REGEX) && turnLenStr.matches(DOUBLE_REGEX)) {
+				int num = Integer.parseInt(numStr);
+				double spurLen= Double.parseDouble(spurLenStr);
+				double turnLen= Double.parseDouble(turnLenStr);
+				command = new CommandCreateTrackRoundhouse(id, reference, deltaOrigin, angleEntry, angleStart, angleEnd, num, spurLen, turnLen);
+				System.out.println("CREATE TRACK ROUNDHOUSE id:"+id+" REFERENCE:"+reference+" DELTA ORIGIN "+ deltaOrigin+" ANGLE ENTRY"+angleEntry+" START:"+angleStart+" END:"+angleEnd+" WITH:"+ num + " SPURS LENGTH:"+spurLen+" TURNTABLE LENGTH:"+turnLen);
+			}
 		}//end of rule 46
 
-		// rule 47 NEEDSFIX
+		// rule 47 FIXED
 		else if
 		(
 			this.commandTextArray.length>=11 &&
@@ -914,10 +938,14 @@ public class CommandParser {
 			this.commandTextArray[9].equalsIgnoreCase("END")
 		)
 		{
-			System.out.println("CREATE TRACK STRAIGHT id1 REFERENCE ( coordinates_world | ( '$' id2 ) ) DELTA START coordinates_delta1 END coordinates_delta2");
+			String id = this.commandTextArray[3];
+			CoordinatesWorld reference = this.parseReferenceOrCoordWorld(this.commandTextArray[5]);
+			CoordinatesDelta deltaStart = this.parseCoordDelta(this.commandTextArray[8]);
+			CoordinatesDelta deltaEnd = this.parseCoordDelta(this.commandTextArray[10]);
+			System.out.println("CREATE TRACK STRAIGHT id:"+id+" REFERENCE:"+reference+" DELTA START:"+deltaStart+" END:"+ deltaEnd);
 		}//end of rule 47
 
-		// rule 48 NEEDSFIX
+		// rule 48 FIXED
 		else if
 		(
 			this.commandTextArray.length>=22 &&
@@ -937,7 +965,18 @@ public class CommandParser {
 			this.commandTextArray[20].equalsIgnoreCase("ORIGIN")
 		)
 		{
-			System.out.println("CREATE TRACK SWITCH TURNOUT id1 REFERENCE ( coordinates_world | ( '$' id2 ) ) STRAIGHT DELTA START coordinates_delta1 END coordinates_delta2 CURVE DELTA START coordinates_delta3 END coordinates_delta4 DISTANCE ORIGIN number");
+			String id = this.commandTextArray[4];
+			CoordinatesWorld reference = this.parseReferenceOrCoordWorld(this.commandTextArray[6]);
+			CoordinatesDelta deltaStart1 = this.parseCoordDelta(this.commandTextArray[10]);
+			CoordinatesDelta deltaEnd1 = this.parseCoordDelta(this.commandTextArray[12]);
+			CoordinatesDelta deltaStart2 = this.parseCoordDelta(this.commandTextArray[16]);
+			CoordinatesDelta deltaEnd2 = this.parseCoordDelta(this.commandTextArray[18]);
+			String numStr = this.commandTextArray[21];
+			if (numStr.matches(DOUBLE_REGEX) && reference!=null && deltaStart1!=null && deltaEnd1!=null && deltaStart2!=null && deltaEnd2!=null) {
+				double num = Double.parseDouble(numStr);
+				command = new CommandCreateTrackCrossover(id, reference, deltaStart1, deltaEnd1, deltaStart2, deltaEnd2);
+				System.out.println("CREATE TRACK SWITCH TURNOUT id:" + id + " REFERENCE:" + reference + " STRAIGHT DELTA START" + deltaStart1 + " END:" + deltaEnd1 + " CURVE DELTA START:" + deltaStart2 + " END:" + deltaEnd2 + "  DISTANCE ORIGIN:" + num);
+			}
 		}//end of rule 48
 
 		// rule 49 NEEDSFIX
@@ -960,11 +999,24 @@ public class CommandParser {
 			this.commandTextArray[21].equalsIgnoreCase("ORIGIN")
 		)
 		{
-			System.out.println("CREATE TRACK SWITCH WYE id1 REFERENCE ( coordinates_world | ( '$' id2 ) ) DELTA START coordinates_delta1 END coordinates_delta2 DISTANCE ORIGIN number1 DELTA START coordinates_delta3 END coordinates_delta4 DISTANCE ORIGIN number2");
+			String id = this.commandTextArray[4];
+			CoordinatesWorld reference = this.parseReferenceOrCoordWorld(this.commandTextArray[6]);
+			CoordinatesDelta deltaStart1 = this.parseCoordDelta(this.commandTextArray[9]);
+			CoordinatesDelta deltaEnd1 = this.parseCoordDelta(this.commandTextArray[11]);
+			String originNum1Str= this.commandTextArray[14];
+			CoordinatesDelta deltaStart2 = this.parseCoordDelta(this.commandTextArray[17]);
+			CoordinatesDelta deltaEnd2 = this.parseCoordDelta(this.commandTextArray[19]);
+			String originNum2Str= this.commandTextArray[22];
+			if (originNum1Str.matches(DOUBLE_REGEX) && reference!=null && deltaStart1!=null && originNum2Str.matches(DOUBLE_REGEX) && deltaEnd1!=null && deltaStart2!=null && deltaEnd2!=null && ) {
+				double originNum1 = Double.parseDouble(originNum1Str);
+				double originNum2 = Double.parseDouble(originNum2Str);
+				command = new CommandCreateTrackSwitchWye(id, reference, deltaStart1, deltaEnd1, deltaStart2, deltaEnd2, );
+				System.out.println("CREATE TRACK SWITCH WYE id1 REFERENCE ( coordinates_world | ( '$' id2 ) ) DELTA START coordinates_delta1 END coordinates_delta2 DISTANCE ORIGIN number1 DELTA START coordinates_delta3 END coordinates_delta4 DISTANCE ORIGIN number2");
+			}
 		}//end of rule 49
 
-		return command; //if nothing else, return null for now
-
+		return command; //if nothing else, return null
+    
     }//end method: parse_CREATE
 
 }//end class: CommandParser

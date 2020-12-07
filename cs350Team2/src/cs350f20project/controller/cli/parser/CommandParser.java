@@ -1010,7 +1010,7 @@ public class CommandParser {
 			if (originNum1Str.matches(DOUBLE_REGEX) && reference!=null && deltaStart1!=null && originNum2Str.matches(DOUBLE_REGEX) && deltaEnd1!=null && deltaStart2!=null && deltaEnd2!=null && ) {
 				double originNum1 = Double.parseDouble(originNum1Str);
 				double originNum2 = Double.parseDouble(originNum2Str);
-				command = new CommandCreateTrackSwitchWye(id, reference, deltaStart1, deltaEnd1, deltaStart2, deltaEnd2, );
+				////command = new CommandCreateTrackSwitchWye(id, reference, deltaStart1, deltaEnd1, deltaStart2, deltaEnd2, );
 				System.out.println("CREATE TRACK SWITCH WYE id1 REFERENCE ( coordinates_world | ( '$' id2 ) ) DELTA START coordinates_delta1 END coordinates_delta2 DISTANCE ORIGIN number1 DELTA START coordinates_delta3 END coordinates_delta4 DISTANCE ORIGIN number2");
 			}
 		}//end of rule 49

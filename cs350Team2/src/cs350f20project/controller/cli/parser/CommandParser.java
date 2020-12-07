@@ -14,7 +14,7 @@ import java.util.Arrays;
 
 public class CommandParser {
 
-	//COMMANDS THAT NEED FIXING: 56, 24-25, 39-49
+	//COMMANDS THAT NEED FIXING: 49
 	// FIELDS
 	private MyParserHelper parserHelper;
 	private String commandText;

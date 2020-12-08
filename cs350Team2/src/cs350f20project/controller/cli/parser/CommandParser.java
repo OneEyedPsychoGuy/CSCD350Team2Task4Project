@@ -47,7 +47,9 @@ public class CommandParser {
 				parseCommands();
 			}
 		}
-		parseCommands();
+        else {
+            parseCommands();
+        }
 	} //end of main parse method
 
 	private Angle parseAngle(String angleStr) {
@@ -205,11 +207,11 @@ public class CommandParser {
 			File tempFile = new File(file);
 			if(tempFile.exists() && !tempFile.isDirectory()) {
 				command = new CommandMetaDoRun(file);
+			    System.out.println("@RUN " + file);
 			}
 			else {
 				System.out.println(file + " file does not exist.");
 			}
-			System.out.println("@RUN " + file);
 		}//end of rule 52
 
 		// rule 55
@@ -251,9 +253,9 @@ public class CommandParser {
 					screenX = Integer.parseInt(screenSizeX);
 					screenY = Integer.parseInt(screenSizeY);
 					command = new CommandMetaViewGenerate(id, coord, worldWidth, new CoordinatesScreen(screenX, screenY));
+			        System.out.println("OPEN VIEW id1:"+id+" ORIGIN:"+coord+" WORLD WIDTH:"+worldWidth+" SCREEN WIDTH: "+screenX+"HEIGHT:" + screenY);
 				}	
 			}
-			System.out.println("OPEN VIEW id1:"+id+" ORIGIN:"+coord+" WORLD WIDTH:"+worldWidth+" SCREEN WIDTH: "+screenX+"HEIGHT:" + screenY);
 		}//end of rule 56
 
 		// rule 60

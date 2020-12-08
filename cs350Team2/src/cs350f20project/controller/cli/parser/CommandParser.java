@@ -47,7 +47,9 @@ public class CommandParser {
 				parseCommands();
 			}
 		}
-		parseCommands();
+        else {
+            parseCommands();
+        }
 	} //end of main parse method
 
 	private Angle parseAngle(String angleStr) {

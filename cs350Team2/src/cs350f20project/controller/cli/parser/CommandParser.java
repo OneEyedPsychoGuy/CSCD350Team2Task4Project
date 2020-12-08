@@ -11,6 +11,7 @@ import cs350f20project.datatype.*;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Locale;
 
 public class CommandParser {
 
@@ -60,16 +61,16 @@ public class CommandParser {
 	// Latitude(int degrees, int minutes, double seconds)
 	private Latitude parseLatitude(String lat) {
 		Latitude latitude = null;
-		if(lat.contains("*") && lat.contains("\'") && lat.contains("\"")) {
-			String[] latArr = lat.split("\\*\'\"");
+		if(lat.contains("*") && lat.contains("'") && lat.contains("\"")) {
+			String[] latArr = lat.split("\\*'\"");
 			int degrees = 0, min = 0; double sec = 0;
 			if (latArr.length >= 3) {
 				if (latArr[0].matches(INT_REGEX)) {
 					int temp = Integer.parseInt(latArr[0]);
 					if (temp <= 90 && temp >= -90) {
 						degrees = temp;
-					} else {
 					}
+				} else {
 					System.out.println("Invalid angle for latitude.");
 					return null;
 				}
@@ -97,8 +98,8 @@ public class CommandParser {
 	//  Longitude(int degrees, int minutes, double seconds)
 	private Longitude parseLongitude(String longStr) {
 		Longitude longitude = null;
-		if(longStr.contains("*") && longStr.contains("\'") && longStr.contains("\"")) {
-			String[] longArr = longStr.split("\\*\'\"");
+		if(longStr.contains("*") && longStr.contains("'") && longStr.contains("\"")) {
+			String[] longArr = longStr.split("\\*'\"");
 			int degrees = 0, min = 0; double sec = 0;
 			if (longArr.length >= 3) {
 				if (longArr[0].matches(INT_REGEX)) {
@@ -341,15 +342,16 @@ public class CommandParser {
 		if (command == null) {
 			System.out.println("Invalid command");
 		}else {
-			//THIS SCHEDULES THE DESIRED COMMAND TO THE PARSERHELPER AFTER ITS BEEN PARSED
+			//THIS SCHEDULES THE DESIRED COMMAND TO THE PARSERHELPER AFTER ITS BE
+			//    {
+			//    	A_Command command = nullEN PARSED
 			this.parserHelper.getActionProcessor().schedule(command);
 		}
 
     }//end method: parse
 
-    private A_Command parse_DO()
-    {
-    	A_Command command = null;
+    private A_Command parse_DO() {
+		A_Command command = null;
     	// rule 2
 		if(this.commandTextArray.length>=3 && this.commandTextArray[1].equalsIgnoreCase("BRAKE"))
 		{
@@ -369,11 +371,7 @@ public class CommandParser {
 		{
 			String id = this.commandTextArray[3];
 			boolean UPorDOWN;
-			if(this.commandTextArray[5].equalsIgnoreCase("UP")) {
-				UPorDOWN = true;
-			}else {
-				UPorDOWN = false;
-			}
+			UPorDOWN = this.commandTextArray[5].equalsIgnoreCase("UP");
 			command = new CommandBehavioralSelectBridge(id, UPorDOWN);
 			System.out.println("DO SELECT DRAWBRIDGE id:"+id+" POSITION " + this.commandTextArray[5]);
 		}//end of rule 6
@@ -388,21 +386,17 @@ public class CommandParser {
 		)
 		{
 			String id = this.commandTextArray[3];
-			double angleNum = 0;
 			String angleStr = this.commandTextArray[5];
-			Angle angle = null;
 			if(angleStr.matches("DOUBLE_REGEX")) {
-				angleNum = Double.parseDouble(angleStr);
+				double angleNum = Double.parseDouble(angleStr);
 				if (angleNum <= 360) {
-					angle = new Angle(angleNum);
-					boolean clockWise = false;
-					if(this.commandTextArray[6].equalsIgnoreCase("CLOCKWISE")) {
-						clockWise = true;
-					}else if(this.commandTextArray[6].equalsIgnoreCase("COUNTERCLOCKWISE")) {
-						clockWise = false;
+					Angle angle = new Angle(angleNum);
+					String clockwiseStr = this.commandTextArray[6];
+					if(clockwiseStr.equalsIgnoreCase("CLOCKWISE") || clockwiseStr.equalsIgnoreCase("COUNTERCLOCKWISE")) {
+						boolean clockWise = clockwiseStr.equalsIgnoreCase("CLOCKWISE");
+						command = new CommandBehavioralSelectRoundhouse(id, angle, clockWise);
+						System.out.println("DO SELECT ROUNDHOUSE id:"+id+" POSITION angle:"+angle+" "+ clockwiseStr.toUpperCase());
 					}
-					command = new CommandBehavioralSelectRoundhouse(id, angle, clockWise);
-					System.out.println("DO SELECT ROUNDHOUSE id:"+id+" POSITION angle:"+angle+" "+this.commandTextArray[6]);
 				}
 			}
 		}//end of rule 7
@@ -417,10 +411,13 @@ public class CommandParser {
 		)
 		{
 			String id = this.commandTextArray[3];
-			boolean primaryorSecondary;
-			primaryorSecondary = this.commandTextArray[5].equalsIgnoreCase("PRIMARY");
-			command = new CommandBehavioralSelectSwitch(id, primaryorSecondary);
-			System.out.println("DO SELECT SWITCH id:"+id+" PATH "+ this.commandTextArray[5]);
+			String primSec = this.commandTextArray[5];
+			if (primSec.equalsIgnoreCase("PRIMARY") || primSec.equalsIgnoreCase("SECONDARY")) {
+				boolean primaryorSecondary;
+				primaryorSecondary = primSec.equalsIgnoreCase("PRIMARY");
+				command = new CommandBehavioralSelectSwitch(id, primaryorSecondary);
+				System.out.println("DO SELECT SWITCH id:"+id+" PATH "+primSec.toUpperCase());
+			}
 
 		}//end of rule 8
 
@@ -433,14 +430,12 @@ public class CommandParser {
 		)
 		{
 			String id = this.commandTextArray[2];
-			boolean forwardOrBackwards;
-			if(this.commandTextArray[4].equalsIgnoreCase("FORWARD")) {
-				forwardOrBackwards = true;
-			} else {
-				forwardOrBackwards = false;
+			String forwardStr = this.commandTextArray[4];
+			if (forwardStr.equalsIgnoreCase("FORWARD") || forwardStr.equalsIgnoreCase("BACKWARD")) {
+				boolean isForward = forwardStr.equalsIgnoreCase("FORWARD");
+				command = new CommandBehavioralSetDirection(id, isForward);
+				System.out.println("DO SET id:" + id + " DIRECTION " + forwardStr.toUpperCase());
 			}
-			command = new CommandBehavioralSetDirection(id, forwardOrBackwards);
-			System.out.println("DO SET id:"+id+" DIRECTION "+this.commandTextArray[4]);
 		}//end of rule 11
 
 		// rule 12
@@ -1003,14 +998,16 @@ public class CommandParser {
 			CoordinatesWorld reference = this.parseReferenceOrCoordWorld(this.commandTextArray[6]);
 			CoordinatesDelta deltaStart1 = this.parseCoordDelta(this.commandTextArray[9]);
 			CoordinatesDelta deltaEnd1 = this.parseCoordDelta(this.commandTextArray[11]);
+			CoordinatesDelta deltaOrigin1 = null;
 			String originNum1Str= this.commandTextArray[14];
 			CoordinatesDelta deltaStart2 = this.parseCoordDelta(this.commandTextArray[17]);
 			CoordinatesDelta deltaEnd2 = this.parseCoordDelta(this.commandTextArray[19]);
+			CoordinatesDelta deltaOrigin2 = null;
 			String originNum2Str= this.commandTextArray[22];
-			if (originNum1Str.matches(DOUBLE_REGEX) && reference!=null && deltaStart1!=null && originNum2Str.matches(DOUBLE_REGEX) && deltaEnd1!=null && deltaStart2!=null && deltaEnd2!=null && ) {
+			if (originNum1Str.matches(DOUBLE_REGEX) && reference!=null && deltaStart1!=null && originNum2Str.matches(DOUBLE_REGEX) && deltaEnd1!=null && deltaStart2!=null && deltaEnd2!=null) {
 				double originNum1 = Double.parseDouble(originNum1Str);
 				double originNum2 = Double.parseDouble(originNum2Str);
-				////command = new CommandCreateTrackSwitchWye(id, reference, deltaStart1, deltaEnd1, deltaStart2, deltaEnd2, );
+				command = new CommandCreateTrackSwitchWye(id, reference, deltaStart1, deltaEnd1, deltaOrigin1, deltaStart2, deltaEnd2, deltaOrigin2);
 				System.out.println("CREATE TRACK SWITCH WYE id1 REFERENCE ( coordinates_world | ( '$' id2 ) ) DELTA START coordinates_delta1 END coordinates_delta2 DISTANCE ORIGIN number1 DELTA START coordinates_delta3 END coordinates_delta4 DISTANCE ORIGIN number2");
 			}
 		}//end of rule 49

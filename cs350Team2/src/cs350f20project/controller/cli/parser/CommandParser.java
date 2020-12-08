@@ -20,7 +20,7 @@ public class CommandParser {
 	private String commandText;
 	private String[] commandTextArray;
 	private String[] semicolonCommandsArray = null;
-	private final String INT_REGEX = "^-?[0-9]\\d{0,7}$", DOUBLE_REGEX= "^-?[0-9]{0,8}.?\\d{0,8}$", POS_DOUBLE_REGEX = "^[0-9]{0,8}.?\\d{0,8}$";
+	private final String INT_REGEX = "^-?[0-9]{0,7}$", DOUBLE_REGEX= "^-?[0-9]{0,8}.?[0-9]{0,8}$", POS_DOUBLE_REGEX = "^[0-9]{0,8}.?[0-9]{0,8}$";
 
 	// CONSTRUCTOR
 	public CommandParser(MyParserHelper parserHelper, String commandText)
@@ -63,7 +63,7 @@ public class CommandParser {
 	private Latitude parseLatitude(String lat) {
 		Latitude latitude = null;
 		if(lat.contains("*") && lat.contains("'") && lat.contains("\"")) {
-			String[] latArr = lat.split("\\*'\"");
+			String[] latArr = lat.split("[\\*'\"]");
 			int degrees = 0, min = 0; double sec = 0;
 			if (latArr.length >= 3) {
 				if (latArr[0].matches(INT_REGEX)) {
@@ -77,7 +77,7 @@ public class CommandParser {
 				}
 				if (latArr[1].matches(INT_REGEX)) {
 					int temp = Integer.parseInt(latArr[1]);
-					if (temp > 0) {
+					if (temp >= 0 && temp < 60) {
 						min = temp;
 					}
 				} else {
@@ -85,7 +85,10 @@ public class CommandParser {
 					return null;
 				}
 				if (latArr[2].matches(POS_DOUBLE_REGEX)) {
-					sec = Double.parseDouble(latArr[2]);
+					double temp = Double.parseDouble(latArr[2]);
+					if (temp >= 0 && temp < 60) {
+						sec = temp;
+					}
 				} else {
 					System.out.println("Invalid seconds for latitude.");
 					return null;
@@ -100,7 +103,7 @@ public class CommandParser {
 	private Longitude parseLongitude(String longStr) {
 		Longitude longitude = null;
 		if(longStr.contains("*") && longStr.contains("'") && longStr.contains("\"")) {
-			String[] longArr = longStr.split("\\*'\"");
+			String[] longArr = longStr.split("[\\*'\"]");
 			int degrees = 0, min = 0; double sec = 0;
 			if (longArr.length >= 3) {
 				if (longArr[0].matches(INT_REGEX)) {
@@ -114,7 +117,7 @@ public class CommandParser {
 				}
 				if (longArr[1].matches(INT_REGEX)) {
 					int temp = Integer.parseInt(longArr[1]);
-					if (temp > 0) {
+					if (temp >= 0 && temp < 60) {
 						min = temp;
 					}
 				} else {
@@ -122,7 +125,10 @@ public class CommandParser {
 					return null;
 				}
 				if (longArr[2].matches(POS_DOUBLE_REGEX)) {
-					sec = Double.parseDouble(longArr[2]);
+					double temp = Double.parseDouble(longArr[2]);
+					if (temp >= 0 && temp < 60) {
+					    sec = temp;
+                    }
 				} else {
 					System.out.println("Invalid seconds for longitude.");
 					return null;

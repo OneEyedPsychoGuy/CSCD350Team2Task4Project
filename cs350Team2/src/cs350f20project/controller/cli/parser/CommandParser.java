@@ -11,7 +11,6 @@ import cs350f20project.datatype.*;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Locale;
 
 public class CommandParser {
 
@@ -937,7 +936,11 @@ public class CommandParser {
 			CoordinatesWorld reference = this.parseReferenceOrCoordWorld(this.commandTextArray[5]);
 			CoordinatesDelta deltaStart = this.parseCoordDelta(this.commandTextArray[8]);
 			CoordinatesDelta deltaEnd = this.parseCoordDelta(this.commandTextArray[10]);
-			System.out.println("CREATE TRACK STRAIGHT id:"+id+" REFERENCE:"+reference+" DELTA START:"+deltaStart+" END:"+ deltaEnd);
+			if (reference!=null && deltaStart!=null && deltaEnd!=null) {
+			    PointLocator locator = new PointLocator(reference, deltaStart, deltaEnd);
+				command = new CommandCreateTrackStraight(id, locator);
+				System.out.println("CREATE TRACK STRAIGHT id:"+id+" REFERENCE:"+reference+" DELTA START:"+deltaStart+" END:"+ deltaEnd);
+			}
 		}//end of rule 47
 
 		// rule 48 FIXED
@@ -966,15 +969,16 @@ public class CommandParser {
 			CoordinatesDelta deltaEnd1 = this.parseCoordDelta(this.commandTextArray[12]);
 			CoordinatesDelta deltaStart2 = this.parseCoordDelta(this.commandTextArray[16]);
 			CoordinatesDelta deltaEnd2 = this.parseCoordDelta(this.commandTextArray[18]);
-			String numStr = this.commandTextArray[21];
-			if (numStr.matches(DOUBLE_REGEX) && reference!=null && deltaStart1!=null && deltaEnd1!=null && deltaStart2!=null && deltaEnd2!=null) {
-				double num = Double.parseDouble(numStr);
-				command = new CommandCreateTrackCrossover(id, reference, deltaStart1, deltaEnd1, deltaStart2, deltaEnd2);
-				System.out.println("CREATE TRACK SWITCH TURNOUT id:" + id + " REFERENCE:" + reference + " STRAIGHT DELTA START" + deltaStart1 + " END:" + deltaEnd1 + " CURVE DELTA START:" + deltaStart2 + " END:" + deltaEnd2 + "  DISTANCE ORIGIN:" + num);
+			String originNumStr = this.commandTextArray[21];
+			if (originNumStr.matches(DOUBLE_REGEX) && reference!=null && deltaStart1!=null && deltaEnd1!=null && deltaStart2!=null && deltaEnd2!=null) {
+				double originNum = Double.parseDouble(originNumStr);
+				CoordinatesDelta deltaOrigin = ShapeArc.calculateDeltaOrigin(reference, deltaStart2, deltaEnd2, originNum);
+				command = new CommandCreateTrackSwitchTurnout(id, reference, deltaStart1, deltaEnd1, deltaStart2, deltaEnd2, deltaOrigin);
+				System.out.println("CREATE TRACK SWITCH TURNOUT id:" + id + " REFERENCE:" + reference + " STRAIGHT DELTA START" + deltaStart1 + " END:" + deltaEnd1 + " CURVE DELTA START:" + deltaStart2 + " END:" + deltaEnd2 + "  DISTANCE ORIGIN:" + originNum);
 			}
 		}//end of rule 48
 
-		// rule 49 NEEDSFIX
+		// rule 49 FIXED
 		else if
 		(
 			this.commandTextArray.length>=23 &&
@@ -998,17 +1002,17 @@ public class CommandParser {
 			CoordinatesWorld reference = this.parseReferenceOrCoordWorld(this.commandTextArray[6]);
 			CoordinatesDelta deltaStart1 = this.parseCoordDelta(this.commandTextArray[9]);
 			CoordinatesDelta deltaEnd1 = this.parseCoordDelta(this.commandTextArray[11]);
-			CoordinatesDelta deltaOrigin1 = null;
 			String originNum1Str= this.commandTextArray[14];
 			CoordinatesDelta deltaStart2 = this.parseCoordDelta(this.commandTextArray[17]);
 			CoordinatesDelta deltaEnd2 = this.parseCoordDelta(this.commandTextArray[19]);
-			CoordinatesDelta deltaOrigin2 = null;
 			String originNum2Str= this.commandTextArray[22];
 			if (originNum1Str.matches(DOUBLE_REGEX) && reference!=null && deltaStart1!=null && originNum2Str.matches(DOUBLE_REGEX) && deltaEnd1!=null && deltaStart2!=null && deltaEnd2!=null) {
 				double originNum1 = Double.parseDouble(originNum1Str);
 				double originNum2 = Double.parseDouble(originNum2Str);
+				CoordinatesDelta deltaOrigin1 = ShapeArc.calculateDeltaOrigin(reference, deltaStart1, deltaEnd1, originNum1);
+				CoordinatesDelta deltaOrigin2 = ShapeArc.calculateDeltaOrigin(reference, deltaStart2, deltaEnd2, originNum2);
 				command = new CommandCreateTrackSwitchWye(id, reference, deltaStart1, deltaEnd1, deltaOrigin1, deltaStart2, deltaEnd2, deltaOrigin2);
-				System.out.println("CREATE TRACK SWITCH WYE id1 REFERENCE ( coordinates_world | ( '$' id2 ) ) DELTA START coordinates_delta1 END coordinates_delta2 DISTANCE ORIGIN number1 DELTA START coordinates_delta3 END coordinates_delta4 DISTANCE ORIGIN number2");
+				System.out.println("CREATE TRACK SWITCH WYE id:"+id+" REFERENCE:"+reference+" DELTA START:"+deltaStart1+" END:"+ deltaEnd2+" DISTANCE ORIGIN:"+ originNum1+" DELTA START:"+ deltaStart2+" END:"+ deltaEnd2+" DISTANCE ORIGIN:"+ originNum2);
 			}
 		}//end of rule 49
 
